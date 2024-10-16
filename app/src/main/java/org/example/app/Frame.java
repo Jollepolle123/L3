@@ -10,6 +10,9 @@ import java.io.File;
 import app.ImageEditor;
 import javax.imageio.ImageIO;
 import app.ImageResizer;
+import app.ImageRotator;
+import app.ImageBrightnessAdjuster;
+import app.ImageColorFilter;
 import java.awt.image.BufferedImage;
 
 public class Frame extends JFrame implements ActionListener{
@@ -17,11 +20,19 @@ public class Frame extends JFrame implements ActionListener{
     private JButton uploadBtn;
     private JButton saveBtn;
     private JButton resizeBtn;
+    private JButton rotateBtn;
+    private JButton brightnessBtn;
+    private JButton colorFilterBtn;
     private ImageEditor editor;
     private JPanel mainPanel = new JPanel();
     private JPanel editButtonsPanel = new JPanel();
     private JTextField height;
     private JTextField width;
+    private JTextField rotation;
+    private JTextField brightness;
+    private JTextField red;
+    private JTextField green;
+    private JTextField blue;
 
 
     Frame() {
@@ -57,11 +68,64 @@ public class Frame extends JFrame implements ActionListener{
         width = new JTextField(8);
         width.setBounds(0, 0, 150, 100);
 
+        rotateBtn = new JButton("Rotate Image");
+        rotateBtn.setFocusable(false);
+        rotateBtn.addActionListener(this);
+        rotateBtn.setSize(40, 40);
+
+        JLabel rotateLabel = new JLabel("Rotation to the right (use negative numbers to rotate to the left):");
+        rotation = new JTextField(8);
+        rotation.setBounds(0, 0, 150, 10);
+
+        brightnessBtn = new JButton("Adjust brightness");
+        brightnessBtn.setFocusable(false);
+        brightnessBtn.addActionListener(this);
+        brightnessBtn.setSize(40, 40);
+
+        JLabel brightnessLabel = new JLabel("Brightness multiplier (1 is current brightness):");
+        brightness = new JTextField(8);
+        brightness.setBounds(0, 0, 150, 10);
+
+        colorFilterBtn = new JButton("Change colors");
+        colorFilterBtn.setFocusable(false);
+        colorFilterBtn.addActionListener(this);
+        colorFilterBtn.setSize(40, 40);
+
+        JLabel redLabel = new JLabel("Multiplier to the red colors in the picture:");
+        red = new JTextField(8);
+        red.setBounds(0, 0, 150, 10);
+
+        JLabel greenLabel = new JLabel("Multiplier to the green colors in the picture:");
+        green = new JTextField(8);
+        green.setBounds(0, 0, 150, 10);
+
+        JLabel blueLabel = new JLabel("Multiplier to the blue colors in the picture:");
+        blue = new JTextField(8);
+        blue.setBounds(0, 0, 150, 10);
+
+
         editButtonsPanel.add(resizeBtn);
         editButtonsPanel.add(label1);
         editButtonsPanel.add(height);
         editButtonsPanel.add(label2);
         editButtonsPanel.add(width);
+
+        editButtonsPanel.add(rotateBtn);
+        editButtonsPanel.add(rotateLabel);
+        editButtonsPanel.add(rotation);
+
+        editButtonsPanel.add(brightnessBtn);
+        editButtonsPanel.add(brightnessLabel);
+        editButtonsPanel.add(brightness);
+
+        editButtonsPanel.add(colorFilterBtn);
+        editButtonsPanel.add(redLabel);
+        editButtonsPanel.add(red);
+        editButtonsPanel.add(greenLabel);
+        editButtonsPanel.add(green);
+        editButtonsPanel.add(blueLabel);
+        editButtonsPanel.add(blue);
+
         
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
         mainPanel.add(buttonPanel, BorderLayout.PAGE_END);
@@ -112,12 +176,42 @@ public class Frame extends JFrame implements ActionListener{
             try {
                 newWidth = Integer.parseInt(width.getText());
                 newHeight = Integer.parseInt(height.getText());
+                ImageResizer resizer = new ImageResizer();
+                BufferedImage resizedImage = resizer.resizeImage(editor.getImage(), newWidth, newHeight);
+                editor.setImage(resizedImage);
             } catch (NumberFormatException e) {
-                break;
             }
-            ImageResizer resizer = new ImageResizer();
-            BufferedImage resizedImage = resizer.resizeImage(editor.getImage(), newWidth, newHeight);
-            editor.setImage(resizedImage);
+        } else if (event.getSource() == rotateBtn) {
+            int newRotation;
+            try {
+                newRotation = Integer.parseInt(rotation.getText());
+                ImageRotator rotator = new ImageRotator();
+                BufferedImage rotatedImage = rotator.rotateImage(editor.getImage(), newRotation);
+                editor.setImage(rotatedImage);
+            } catch (NumberFormatException e) {
+            }
+        } else if (event.getSource() == brightnessBtn) {
+            float brightnessMultiplier;
+            try {
+                brightnessMultiplier = Float.parseFloat(brightness.getText());
+                ImageBrightnessAdjuster brightnessAdjuster = new ImageBrightnessAdjuster();
+                BufferedImage brightenedImage = brightnessAdjuster.adjustBrightness(editor.getImage(), brightnessMultiplier);
+                editor.setImage(brightenedImage);
+            } catch (NumberFormatException e) {
+            }
+        } else if (event.getSource() == colorFilterBtn) {
+            Float redMultiplier;
+            Float greenMultiplier;
+            Float blueMultiplier;
+            try {
+                redMultiplier = Float.parseFloat(red.getText());
+                greenMultiplier = Float.parseFloat(green.getText());
+                blueMultiplier = Float.parseFloat(blue.getText());
+                ImageColorFilter colorFilter = new ImageColorFilter();
+                BufferedImage filteredImage = colorFilter.adjustColor(editor.getImage(), redMultiplier, greenMultiplier, blueMultiplier);
+                editor.setImage(filteredImage);
+            } catch (NumberFormatException e) {
+            }
         }
     }
 
