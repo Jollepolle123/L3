@@ -33,6 +33,8 @@ public class Frame extends JFrame implements ActionListener{
     private JTextField red;
     private JTextField green;
     private JTextField blue;
+    private ImagePanel imagePanel = new ImagePanel();
+    private Image image;
 
 
     Frame() {
@@ -103,6 +105,7 @@ public class Frame extends JFrame implements ActionListener{
         blue = new JTextField(8);
         blue.setBounds(0, 0, 150, 10);
 
+        editButtonsPanel.setLayout(new GridLayout(4, 7, 10, 10));
 
         editButtonsPanel.add(resizeBtn);
         editButtonsPanel.add(label1);
@@ -148,10 +151,12 @@ public class Frame extends JFrame implements ActionListener{
                     editor = new ImageEditor("");
                     File file_path = new File(file_upload.getSelectedFile().getAbsolutePath());
                     System.out.println(file_path);
-                    //ImageEditor editor = new ImageEditor(file_path.getAbsolutePath());
                     editor.setImage(ImageIO.read(new File(file_path.getAbsolutePath())));
-                    //editor.saveImage("png", file_path.getParent() + "/shalle1.png");
-                    showImage(file_path.getAbsolutePath());
+                    imagePanel.setImage(file_path.getAbsolutePath());
+                    mainPanel.add(imagePanel, BorderLayout.CENTER);
+                    mainPanel.add(editButtonsPanel, BorderLayout.CENTER);
+                    this.setVisible(true);
+                    //showImage(file_path.getAbsolutePath());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -213,25 +218,5 @@ public class Frame extends JFrame implements ActionListener{
             } catch (NumberFormatException e) {
             }
         }
-    }
-
-    void showImage(String imagePath) {
-        JPanel imagePanel = new JPanel() {
-            @Override
-            protected void paintComponent (Graphics g) {
-                super.paintComponent(g);
-                ImageIcon icon = new ImageIcon(imagePath);
-                Image image = icon.getImage();
-
-                if (image != null) {
-                    int x = (getWidth() - image.getWidth(null)) / 2;
-                    int y = (getHeight() - image.getHeight(null)) / 2;
-                    g.drawImage(image, x, y, this);
-                }
-            }
-        };
-        mainPanel.add(imagePanel, BorderLayout.CENTER);
-        mainPanel.add(editButtonsPanel, BorderLayout.CENTER);
-        this.setVisible(true);
     }
 }
