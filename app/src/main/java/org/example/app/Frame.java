@@ -211,20 +211,22 @@ public class Frame extends JFrame implements ActionListener {
         Object source = event.getSource();
 
         if (source == uploadBtn) {
-            editorManager.uploadImage();
-            mainPanel.add(editButtonsPanel, BorderLayout.SOUTH);
-            this.setVisible(true);
+            if (editorManager.uploadImage()) {
+                mainPanel.add(editButtonsPanel, BorderLayout.SOUTH);
+                this.setVisible(true);
+            }
         } else if (source == saveBtn) {
-            editorManager.saveImage(this, saveFileName.getText(), (String) saveFileType.getSelectedItem());
-        } 
-        else if (source == resizeBtn) {
+            if (saveFileName.getText().length() >= 1) {
+                editorManager.saveImage(this, saveFileName.getText(), (String) saveFileType.getSelectedItem());
+            }
+        } else if (source == resizeBtn) {
             editorManager.performAction(new ResizeAction(Integer.parseInt(width.getText()), Integer.parseInt(height.getText())));
-        }  else if (source == rotateBtn) {
+        } else if (source == rotateBtn) {
             editorManager.performAction(new RotateAction(Integer.parseInt(rotation.getText())));
         } else if (source == brightnessBtn) {
-            editorManager.performAction(new BrightnessAction(Integer.parseInt(brightness.getText())));
+            editorManager.performAction(new BrightnessAction(Float.parseFloat(brightness.getText())));
         } else if (source == colorFilterBtn) {
-            editorManager.performAction(new ColorFilterAction(1, 0, 1));
+            editorManager.performAction(new ColorFilterAction(Float.parseFloat(red.getText()), Float.parseFloat(green.getText()), Float.parseFloat(blue.getText())));
         } else if (source == invertColorBtn) {
             editorManager.performAction(new InvertColorAction());
         }

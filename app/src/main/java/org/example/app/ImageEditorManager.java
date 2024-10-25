@@ -14,7 +14,7 @@ public class ImageEditorManager {
         this.imagePanel = imagePanel;
     }
 
-    public void uploadImage() {
+    public boolean uploadImage() {
         JFileChooser fileChooser = new JFileChooser();
         int res = fileChooser.showOpenDialog(null);
         if (res == JFileChooser.APPROVE_OPTION) {
@@ -23,10 +23,12 @@ public class ImageEditorManager {
                 editor = new ImageEditor(file.getAbsolutePath());
                 editor.setImage(ImageIO.read(file));
                 imagePanel.setImage(file.getAbsolutePath());
+                return true;
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+        return false;
     }
 
     public void saveImage(JFrame frame, String fileName, String imageType) {

@@ -10,13 +10,7 @@ public class ImageEditor {
 
     // Läser in bilden som skickas in.
     public ImageEditor(String filePath) throws IOException {
-        try {
-            if (filePath.length() > 0) {
-                this.image = ImageIO.read(new File(filePath));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.image = ImageIO.read(new File(filePath));
     }
 
     // Sparar bilden till satt format och "path".
